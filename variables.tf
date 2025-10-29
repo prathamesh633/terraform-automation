@@ -13,7 +13,7 @@ variable "instance_type" {
 variable "allowed_cidr" {
   description = "CIDR allowed to SSH in (restrict this!)"
   type        = string
-  default     = "0.0.0.0/0"
+  default     = "203.0.113.42/32"
 }
 
 variable "name_prefix" {
