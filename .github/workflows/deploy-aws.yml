@@ -1,0 +1,59 @@
+name: "Terraform AWS Deploy"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Securely configure AWS credentials from GitHub Secrets
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.0'
+
+      # Create terraform.tfvars from non-secret variables (public key, key name, etc.)
+      - name: Generate terraform.tfvars from secrets
+        run: |
+          cat <<EOF > terraform.tfvars
+          public_key = "${{ secrets.SSH_PUBLIC_KEY }}"
+          key_name   = "${{ secrets.KEY_NAME }}"
+          allowed_cidr = "${{ secrets.ALLOWED_CIDR }}"
+          name_prefix = "gh-actions"
+          # Add other non-secret variables here if needed
+          EOF
+
+      # Optionally, export secret environment variables for Terraform (for sensitive values)
+      # Example: admin_password picked up by Terraform as var.admin_password
+      - name: Export TF_VAR_* secrets
+        run: |
+          echo "Masking and exporting secret variables..."
+          # Add as many secrets as you want with TF_VAR_ prefix
+          echo "TF_VAR_admin_password=${{ secrets.TF_VAR_ADMIN_PASSWORD }}" >> $GITHUB_ENV
+          # echo "TF_VAR_other_secret=${{ secrets.TF_VAR_OTHER_SECRET }}" >> $GITHUB_ENV
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        run: terraform plan -out=tfplan -input=false
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve tfplan
+
+      # Optionally, add a destroy job for teardown (manually or on schedule)
