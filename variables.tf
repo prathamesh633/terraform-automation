@@ -10,18 +10,6 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "key_name" {
-  description = "Name to use for the AWS key pair"
-  type        = string
-  default     = "deployer-key"
-}
-
-variable "public_key" {
-  description = "Your SSH public key material (ssh-rsa AAAA... or ssh-ed25519 AAAA...)"
-  type        = string
-  default     = ""
-}
-
 variable "allowed_cidr" {
   description = "CIDR allowed to SSH in (restrict this!)"
   type        = string
