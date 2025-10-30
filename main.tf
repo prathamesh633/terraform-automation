@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.region
+  region = "ap-south-1"
   
 }
 
@@ -73,7 +73,7 @@ output "private_key_pem" {
 # 6. EC2 Instance with user creation via user_data
 resource "aws_instance" "web" {
   ami                         = "ami-02d26659fd82cf299" # Amazon Linux 2 AMI (ap-south-1); update as necessary
-  instance_type               = var.instance_type
+  instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.main.id
   vpc_security_group_ids      = [aws_security_group.ssh.id]
   key_name                    = aws_key_pair.deployer.key_name
