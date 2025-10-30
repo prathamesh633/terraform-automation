@@ -23,7 +23,7 @@ resource "aws_security_group" "ssh" {
 }
 
 resource "aws_instance" "web" {
-  ami                    = "ami-02d26659fd82cf29"
+  ami                    = "ami-02d26659fd82cf299"
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.ssh.id]
   tags = {
