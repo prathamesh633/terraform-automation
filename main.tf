@@ -3,9 +3,14 @@ provider "aws" {
 }
 
 
+data "aws_subnet_ids" "default" {
+  vpc_id = data.aws_vpc.default.id
+}
+
 resource "aws_security_group" "ssh" {
   name        = "${var.name_prefix}-sg"
   description = "Allow SSH access"
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     from_port   = 22
@@ -26,6 +31,7 @@ resource "aws_instance" "web" {
   ami                    = "ami-02d26659fd82cf299"
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.ssh.id]
+  subnet_id              = data.aws_subnet_ids.default.ids[0]
   tags = {
     Name = "${var.name_prefix}-instance"
   }
