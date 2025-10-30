@@ -2,15 +2,6 @@ provider "aws" {
   region = var.region
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
-  }
-}
 
 resource "aws_security_group" "ssh" {
   name        = "${var.name_prefix}-sg"
@@ -32,7 +23,7 @@ resource "aws_security_group" "ssh" {
 }
 
 resource "aws_instance" "web" {
-  ami                    = data.aws_ami.amazon_linux.id
+  ami                    = "ami-02d26659fd82cf29"
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.ssh.id]
   tags = {
