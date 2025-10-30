@@ -1,6 +1,6 @@
 provider "aws" {
   region = var.region
-  profile = "office-user"
+  
 }
 
 # 1. Create a VPC
